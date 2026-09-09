@@ -1,0 +1,83 @@
+# tmz
+
+`tmz` is a thin wrapper around `tmux` for people whose fingers still type
+`screen` commands. It forwards every argument to `tmux` unchanged, except that
+it recognizes `screen`'s attach flags as the first argument and rewrites them
+into the equivalent `tmux attach` invocation. Once the arguments are settled it
+`exec`s `tmux`, replacing itself, so `tmz` leaves nothing behind in the process
+tree.
+
+## Usage
+
+```
+tmz [screen-style attach flags | tmux arguments ...]
+```
+
+Run it exactly as you would run `tmux`:
+
+```sh
+tmz                     # exec: tmux
+tmz new -s work         # exec: tmux new -s work
+tmz ls                  # exec: tmux ls
+tmz -L mysock attach    # exec: tmux -L mysock attach
+```
+
+If the **first** argument is one of `screen`'s attach flags, it is translated:
+
+| You type            | `tmz` runs                  | Meaning                              |
+| ------------------- | --------------------------- | ------------------------------------ |
+| `tmz -r`            | `tmux attach`               | reattach to a session               |
+| `tmz -r work`       | `tmux attach -t work`       | reattach to session `work`          |
+| `tmz -x`            | `tmux attach`               | attach (shared; tmux's default)      |
+| `tmz -x work`       | `tmux attach -t work`       | attach to session `work` (shared)   |
+| `tmz -dr`           | `tmux attach -d`            | detach elsewhere, then attach here   |
+| `tmz -dr main`      | `tmux attach -d -t main`    | same, for session `main`            |
+| `tmz -d -r main`    | `tmux attach -d -t main`    | same, flags given separately         |
+
+The token after the flag is treated as a session name only when it does not
+start with `-`; anything else (including further flags and trailing arguments)
+is passed through to `tmux attach` untouched. Screen-style flags are recognized
+only in the first position — anywhere else they are left alone and handed to
+`tmux` as-is.
+
+`tmz` handles two options itself instead of passing them to `tmux`, and only
+when they appear as the **first** argument:
+
+| You type         | `tmz` does                          |
+| ---------------- | ----------------------------------- |
+| `tmz -h`, `--help`    | print usage and exit            |
+| `tmz -V`, `--version` | print `tmz <version>` and exit  |
+
+`-V` shadows `tmux`'s own version flag; `tmux`'s other options, including `-v`
+(verbose logging), are untouched.
+
+To hand `tmux` an argument that `tmz` would otherwise claim, put `--` first:
+everything after it is passed through verbatim with no translation.
+
+```sh
+tmz -- -V        # exec: tmux -V   (tmux's version)
+tmz -- -h        # exec: tmux -h
+tmz --           # exec: tmux
+```
+
+`tmz` exits with status 1 if `tmux` cannot be found in `PATH`.
+
+## Building
+
+`tmz` is a single Go module with no dependencies. You need Go 1.26 or newer.
+
+```sh
+go build -o tmz .       # produces ./tmz
+```
+
+Install it onto your `PATH` instead:
+
+```sh
+go install github.com/mmessmore/tmz@latest
+```
+
+Run the tests:
+
+```sh
+go test ./...
+```
