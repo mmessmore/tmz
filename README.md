@@ -66,18 +66,34 @@ tmz --           # exec: tmux
 
 `tmz` is a single Go module with no dependencies. You need Go 1.26 or newer.
 
+### The Go toolchain
+
+Nothing special is required — use `go` in the usual way.
+
 ```sh
-go build -o tmz .       # produces ./tmz
+go build -o tmz .                        # produces ./tmz
+go install github.com/mmessmore/tmz@latest   # build and drop it in $GOBIN
+go test ./...                            # run the tests
 ```
 
-Install it onto your `PATH` instead:
+### Using `make`
+
+The `Makefile` wraps the same commands and adds a few conveniences.
+
+| Target        | What it does                                                                  |
+| ------------- | ---------------------------------------------------------------------------- |
+| `make`        | Build `./tmz` (alias for `make build`).                                     |
+| `make test`   | Run `go test ./...`.                                                        |
+| `make lint`   | Check formatting with `gofmt -l` and run `go vet ./...`.                    |
+| `make fmt`    | Reformat the source with `go fmt ./...`.                                    |
+| `make install`| Build, then `install -m 755` the binary into `DEST`.                        |
+| `make dist`   | Cross-compile static release binaries into `dist/` for macOS, Linux, and Windows. |
+| `make clean`  | Remove `./tmz` and `dist/`.                                                 |
+
+`make install` picks `DEST` automatically: the first of `$HOME/bin`,
+`$HOME/.local/bin`, or `/usr/local/bin` that exists. Override it explicitly
+when needed:
 
 ```sh
-go install github.com/mmessmore/tmz@latest
-```
-
-Run the tests:
-
-```sh
-go test ./...
+make install DEST=~/.local/bin
 ```
