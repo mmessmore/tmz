@@ -90,20 +90,10 @@ go test ./...                            # run the tests
 
 The `Makefile` wraps the same commands and adds a few conveniences.
 
-| Target        | What it does                                                                  |
-| ------------- | ---------------------------------------------------------------------------- |
-| `make`        | Build `./tmz` (alias for `make build`).                                     |
-| `make test`   | Run `go test ./...`.                                                        |
-| `make lint`   | Check formatting with `gofmt -l` and run `go vet ./...`.                    |
-| `make fmt`    | Reformat the source with `go fmt ./...`.                                    |
-| `make install`| Build, then `install -m 755` the binary into `DEST`.                        |
-| `make dist`   | Cross-compile static release binaries into `dist/` for macOS, Linux, and Windows. |
-| `make clean`  | Remove `./tmz` and `dist/`.                                                 |
-
-`make install` picks `DEST` automatically: the first of `$HOME/bin`,
-`$HOME/.local/bin`, or `/usr/local/bin` that exists. Override it explicitly
-when needed:
-
-```sh
-make install DEST=~/.local/bin
-```
+| Target       | What it does                                                                  |
+| ------------ | ---------------------------------------------------------------------------- |
+| `make`       | Build `./tmz`.                                                               |
+| `make test`  | Run `go test`.                                                               |
+| `make dist`  | Cross-compile release binaries into `dist/` for macOS, Linux, and Windows.   |
+| `make deb`   | Build `.deb` packages (`amd64` and `arm64`) into `dist/`. Requires `dpkg-deb`. |
+| `make clean` | Remove `./tmz` and `dist/`.                                                  |
