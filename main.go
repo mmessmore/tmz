@@ -40,13 +40,20 @@ func main() {
 		os.Exit(0)
 	}
 
-	tmuxArgs := translate(args)
-
 	path, err := exec.LookPath("tmux")
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "tmz: tmux not found in PATH")
 		os.Exit(1)
 	}
+
+	tmuxArgs := translate(args)
+	if len(args) == 0 {
+		if sessions, _ := listSessions(path); len(sessions) > 0 {
+			tmuxArgs = chooserArgs(sessions)
+		}
+	}
+
+	setTerminalTitle(os.Stdout)
 
 	argv := append([]string{"tmux"}, tmuxArgs...)
 	if err := syscall.Exec(path, argv, os.Environ()); err != nil {

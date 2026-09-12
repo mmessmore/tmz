@@ -22,6 +22,12 @@ tmz ls                  # exec: tmux ls
 tmz -L mysock attach    # exec: tmux -L mysock attach
 ```
 
+Running `tmz` bare (no arguments) when one or more tmux sessions already
+exist shows a menu of those sessions instead of blindly starting a new one,
+with an option to start a new session too. Pick a session to attach to it, or
+"New session" to create one; `Escape`/`q` cancels. If no tmux server is
+running yet, `tmz` behaves as before and just starts tmux normally.
+
 If the **first** argument is one of `screen`'s attach flags, it is translated:
 
 | You type            | `tmz` runs                  | Meaning                              |
@@ -61,6 +67,10 @@ tmz --           # exec: tmux
 ```
 
 `tmz` exits with status 1 if `tmux` cannot be found in `PATH`.
+
+When run from a terminal, `tmz` also sets the terminal's title to the local
+host's short name (the hostname up to the first `.`, like `uname -n | cut -d.
+-f1`), before handing off to `tmux`.
 
 ## Building
 
