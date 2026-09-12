@@ -1,7 +1,7 @@
 package main
 
 // version is the current release of tmz.
-const version = "0.0.1"
+const version = "1.0.0"
 
 // infoKind identifies an informational flag that tmz handles itself instead of
 // passing on to tmux.

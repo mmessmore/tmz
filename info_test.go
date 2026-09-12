@@ -10,8 +10,8 @@ func TestVersionText(t *testing.T) {
 	if got := versionText(); got != want {
 		t.Errorf("versionText() = %q, want %q", got, want)
 	}
-	if version != "0.0.1" {
-		t.Errorf("version = %q, want %q", version, "0.0.1")
+	if version != "1.0.0" {
+		t.Errorf("version = %q, want %q", version, "1.0.0")
 	}
 }
 
